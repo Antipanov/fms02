@@ -929,6 +929,13 @@ def fights(comp_id):
     fights = FightsDB.query.all()
     return render_template('fights.html', **values, fights = fights, competition = competition)
 
+# fight_map
+@app.route("/fightmap/<int:comp_id>", methods=["GET", "POST"])
+def fight_map(comp_id):
+    competition = CompetitionsDB.query.get(comp_id)
+
+    return render_template("fight_map.html", competition_data = competition)
+
 @app.route('/test')
 def test():
     test_value = "Это значение, приехавшее с сервера"
@@ -1022,7 +1029,9 @@ def right_fighter_m1_score_added_func(message):
     #values['right_fighter_score'] = message['right_fighter_score']
     # print("values['left_fighter_d1_score'] ",values['left_fighter_d1_score'])
     emit('update_right_fighter_m1_score', message, broadcast=True)    
-  
+
+
+
 # Settings view
 @app.route("/settings", methods=["GET", "POST"])
 def settings_form():
@@ -1052,5 +1061,5 @@ def settings_form():
 
 
 if __name__ == "__main__":
-    socketio.run(app)
-    # app.run()
+    # socketio.run(app)
+    app.run()
