@@ -14,7 +14,7 @@
 
 
 {% block content %}
-    <div class="container" style="margin-top: 10px">
+<div class="container" style="margin-top: 10px">
         <div class="row">
             <div class="col">
                 <nav aria-label="breadcrumb">
@@ -40,20 +40,18 @@
 
 
 
+            </div>
 
-    </div>
-
-</div>
+        </div>
 
 <!--В этом ряду будут лежать колонки с кругами-->
     <div class="row" style="margin-top: 30px;">
-<!--        <div class="col">-->
         <!-- Контент колонок с боями            -->
 
         {% for number_of_columns in range(1,6) %}
             <div class="col" style="Min-width: 250px">
                 <div class="shadow p-3 mb-5 bg-white rounded">
-                    <b>Раунд №{{ number_of_columns }}</b>
+                    <b>Круг №{{ number_of_columns }}</b>
                     <p></p>
                     {% for number_of_fights in range(1,4) %}
                             <div class="card shadow-sm p-10 mb-3 bg-white rounded"> <!-- div в котором будут бои -->
