@@ -11,6 +11,7 @@ import csv
 import pandas as pd
 import download_comp_result_module
 
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'vnkdjnfjknfl1232#'
 #app.secret_key = os.environ.get('SECRET')
@@ -933,6 +934,7 @@ def fights(comp_id):
 @app.route("/fightmap/<int:comp_id>", methods=["GET", "POST"])
 def fight_map(comp_id):
     competition = CompetitionsDB.query.get(comp_id)
+
 
     return render_template("fight_map.html", competition_data = competition)
 
