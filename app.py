@@ -5,7 +5,7 @@ from flask_bootstrap import Bootstrap
 from forms import SettingsForm, CompetitionForm, WeightCategoriesForm, AgeCategoriesForm, ParticipantForm
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, date
-from sqlalchemy import desc, asc
+from sqlalchemy import desc, asc, update
 from flask_migrate import Migrate
 import csv
 import pandas as pd
@@ -39,14 +39,15 @@ class WeightcategoriesDB(db.Model):
 
 """Модель для регистрации"""
 class RegistrationDB(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    competition_id = db.Column(db.Integer, db.ForeignKey('competitionsDB.competition_id'))
-    fighter_id = db.Column(db.Integer, db.ForeignKey('fightersDB.fighter_id'))
-    fighter_registration_weight = db.Column(db.Integer)
-    fighter_registration_age = db.Column(db.Integer)
-    weight_cat_id = db.Column(db.Integer, db.ForeignKey('weightcategoriesDB.weight_cat_id'))
-    age_cat_id = db.Column(db.Integer, db.ForeignKey('agecategoriesDB.id'))
-    finish_round_id = db.Column(db.Integer, db.ForeignKey('roundsDB.id'))
+  id = db.Column(db.Integer, primary_key=True)
+  competition_id = db.Column(db.Integer, db.ForeignKey('competitionsDB.competition_id'))
+  fighter_id = db.Column(db.Integer, db.ForeignKey('fightersDB.fighter_id'))
+  fighter_registration_weight = db.Column(db.Integer)
+  fighter_registration_age = db.Column(db.Integer)
+  reg_activity_status = db.Column(db.Boolean, default = True)
+  weight_cat_id = db.Column(db.Integer, db.ForeignKey('weightcategoriesDB.weight_cat_id'))
+  age_cat_id = db.Column(db.Integer, db.ForeignKey('agecategoriesDB.id'))
+  finish_round_id = db.Column(db.Integer, db.ForeignKey('roundsDB.id'))
 
 
 """Модель для кругов"""
@@ -122,13 +123,14 @@ db.create_all()
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
+
 """Возрастные категории"""
 age_category_1 = AgecategoriesDB(id=1, sort_index=500, age_category_name= ' от 0 до 12 лет включительно', age_category_start=0, age_category_finish=12)
 age_category_2 = AgecategoriesDB(id=2, sort_index=600, age_category_name= 'от 13 до 15 лет включительно', age_category_start=13, age_category_finish=15)
 age_category_3 = AgecategoriesDB(id=3, sort_index=700, age_category_name= 'старше 16 лет включительно', age_category_start=16, age_category_finish=1800)
-db.session.add(age_category_1)
-db.session.add(age_category_2)
-db.session.add(age_category_3)
+# db.session.add(age_category_1)
+# db.session.add(age_category_2)
+# db.session.add(age_category_3)
 
 
 """Круги"""
@@ -139,13 +141,13 @@ round_4 = RoundsDB(id=4, sort_index=800, round_name='круг 4')
 round_semifinal = RoundsDB(id=5, sort_index=900, round_name='полуфинал')
 round_34 = RoundsDB(id=6, sort_index=1000, round_name='за 3 и 4 место')
 round_final = RoundsDB(id=7, sort_index=1100, round_name='финал за 1 и 2 место')
-db.session.add(round_1)
-db.session.add(round_2)
-db.session.add(round_3)
-db.session.add(round_4)
-db.session.add(round_semifinal)
-db.session.add(round_34)
-db.session.add(round_final)
+# db.session.add(round_1)
+# db.session.add(round_2)
+# db.session.add(round_3)
+# db.session.add(round_4)
+# db.session.add(round_semifinal)
+# db.session.add(round_34)
+# db.session.add(round_final)
 
 
 """Весовые категории"""
@@ -153,21 +155,26 @@ w_category_1 = WeightcategoriesDB(weight_cat_id = 1, sort_index = 500, weight_ca
 w_category_2 = WeightcategoriesDB(weight_cat_id = 2, sort_index = 600, weight_category_name = 'от 37 до 48 кг включительно', weight_category_start = 37, weight_category_finish = 48)
 w_category_3 = WeightcategoriesDB(weight_cat_id = 3, sort_index = 700, weight_category_name = 'от 49 до 72 кг включительно', weight_category_start = 49, weight_category_finish = 72)
 w_category_4 = WeightcategoriesDB(weight_cat_id = 4, sort_index = 800, weight_category_name = 'свыше 73 кг включительно', weight_category_start = 73, weight_category_finish = 1000)
-db.session.add(w_category_1)
-db.session.add(w_category_2)
-db.session.add(w_category_3)
-db.session.add(w_category_4)
+# db.session.add(w_category_1)
+# db.session.add(w_category_2)
+# db.session.add(w_category_3)
+# db.session.add(w_category_4)
 
 
 """Соревнования"""
 competition_one = CompetitionsDB(competition_id = 1, competition_name = "Первенство Москвы по каратэ.")
-db.session.add(competition_one)
+# db.session.add(competition_one)
+
+
+# RegistrationDB.query.update({RegistrationDB.reg_activity_status: True}) 
+
 
 try:
    db.session.commit()
 except Exception as e:
-    #print(e)
+    print("не удалось закомитить изменения в db", e)
     db.session.rollback()
+    
 
 
 # import fighters csv
@@ -184,6 +191,26 @@ def import_fighters_csv():
     return "yep"
 #import_fighters_csv()
 
+def create_zero_fighter():
+  new_fighter = FightersDB(fighter_id = 0, active_status=1, name = "боец ", last_name="не определен")
+  db.session.add(new_fighter)
+  try:
+    db.session.commit()
+  except Exception as e:
+    db.session.rollback()
+    print("не получилось добавить запись о нулевом бойце", e)
+# create_zero_fighter()
+
+def create_zero_reg():
+  new_reg = RegistrationDB(id = 0, competition_id = 1, fighter_id=0)
+  db.session.add(new_reg)
+  try:
+    db.session.commit()
+  except Exception as e:
+    db.session.rollback()
+    print("не получилось добавить запись о нулевой регистрации", e)
+# create_zero_fighter()
+  
 # import fighters csv
 def import_regs_csv():
     with open('fighters - registration_csv.csv', encoding='utf8') as csvfile:
