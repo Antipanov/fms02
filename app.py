@@ -10,6 +10,7 @@ from flask_migrate import Migrate
 import csv
 import pandas as pd
 import download_comp_result_module
+import fms_model
 
 
 app = Flask(__name__)
@@ -933,10 +934,13 @@ def fights(comp_id):
 # fight_map
 @app.route("/fightmap/<int:comp_id>", methods=["GET", "POST"])
 def fight_map(comp_id):
-    competition = CompetitionsDB.query.get(comp_id)
+  competition = CompetitionsDB.query.get(comp_id)
+  # количество раундов в категории:
+  total_round_qty = fms_model.fight_map()[0]
+  weight_category_rounds_data = fms_model.fight_map()[1]
+    
 
-
-    return render_template("fight_map.html", competition_data = competition)
+  return render_template("fight_map.html", competition_data = competition, total_round_qty=total_round_qty, weight_category_rounds_data = weight_category_rounds_data)
 
 @app.route('/test')
 def test():

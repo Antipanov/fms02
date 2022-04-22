@@ -48,15 +48,15 @@
     <div class="row" style="margin-top: 30px;">
         <!-- Контент колонок с боями            -->
 
-        {% for round_data in weight_category_rounds_data %}
+        {% for number_of_columns in range(0,total_round_qty) %}
             <div class="col" style="Min-width: 250px">
                 <div class="shadow p-3 mb-5 bg-white rounded">
-                    <b>Круг №{{ loop.index0 + 1 }}</b>
+                    <b>Круг №{{ number_of_columns +1 }}</b>
                     <p></p>
-                    {% for number_of_fights in range(weight_category_rounds_data[loop.index0]['fights_qty_in_round']) %}
+                    {% for number_of_fights in range(1,4) %}
                             <div class="card shadow-sm p-10 mb-3 bg-white rounded"> <!-- div в котором будут бои -->
                                   <div class="card-header d-flex justify-content-between">
-                                      Бой №{{number_of_fights + 1}}
+                                      Бой №{{number_of_fights}}
                                       <a href="#" class="btn btn-sm btn-outline-secondary"><i class="bi bi-trash"></i></a>
                                   </div>
                                   <div class="card-body">
