@@ -202,14 +202,14 @@ def create_zero_fighter():
 # create_zero_fighter()
 
 def create_zero_reg():
-  new_reg = RegistrationDB(id = 0, competition_id = 1, fighter_id=0)
+  new_reg = RegistrationDB(id = 0, competition_id = 1, fighter_id=0, reg_activity_status=True)
   db.session.add(new_reg)
   try:
     db.session.commit()
   except Exception as e:
     db.session.rollback()
     print("не получилось добавить запись о нулевой регистрации", e)
-# create_zero_fighter()
+# create_zero_reg()
   
 # import fighters csv
 def import_regs_csv():
